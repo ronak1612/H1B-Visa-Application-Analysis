@@ -12,8 +12,8 @@ cleaning1 = FILTER data BY year!='NA' AND job_title!='NA' AND full_time_position
 
 --Year2011 FULL TIME
 
-d2011 = FILTER cleaning1 BY year == '$1' AND full_time_position == '$2' AND (case_status == 'CERTIFIED' OR case_status == 
-'CERTIFIED-WITHDRAWN');
+d2011 = FILTER cleaning1 BY year == '$year' AND full_time_position == '$position' AND (case_status == 'CERTIFIED' OR 
+case_status == 'CERTIFIED-WITHDRAWN');
 
 dummy1 = FOREACH d2011 GENERATE $7, $4, $6; /*YEAR, JOB_TITLE, WAGE*/
 
