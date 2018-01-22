@@ -1,0 +1,66 @@
+
+
+CREATE TABLE top10_job_position_2011(year string, job_position string, Number_Of_Applications bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+CREATE TABLE top10_job_position_2012(year string, job_position string, Number_Of_Applications bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+CREATE TABLE top10_job_position_2013(year string, job_position string, Number_Of_Applications bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+CREATE TABLE top10_job_position_2014(year string, job_position string, Number_Of_Applications bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+CREATE TABLE top10_job_position_2015(year string, job_position string, Number_Of_Applications bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+CREATE TABLE top10_job_position_2016(year string, job_position string, Number_Of_Applications bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top10_job_position_2011 select d1.year, d1.job_title, count(*) as aa where d1.year="2011" group by d1.year, d1.job_title order by aa DESC limit 10;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top10_job_position_2012 select d1.year, d1.job_title, count(*) as aa where d1.year="2012" group by d1.year, d1.job_title order by aa DESC limit 10;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top10_job_position_2013 select d1.year, d1.job_title, count(*) as aa where d1.year="2013" group by d1.year, d1.job_title order by aa DESC limit 10;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top10_job_position_2014 select d1.year, d1.job_title, count(*) as aa where d1.year="2014" group by d1.year, d1.job_title order by aa DESC limit 10;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top10_job_position_2015 select d1.year, d1.job_title, count(*) as aa where d1.year="2015" group by d1.year, d1.job_title order by aa DESC limit 10;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top10_job_position_2016 select d1.year, d1.job_title, count(*) as aa where d1.year="2016" group by d1.year, d1.job_title order by aa DESC limit 10;
+
+
+
+top10_job_position.sql
+
+Select * from (
+
+select * from h1b_analysis.top10_job_position_2011
+  union
+select * from h1b_analysis.top10_job_position_2012
+  union
+select * from h1b_analysis.top10_job_position_2013
+  union
+select * from h1b_analysis.top10_job_position_2014
+  union
+select * from h1b_analysis.top10_job_position_2015
+  union
+select * from h1b_analysis.top10_job_position_2016
+               ) as result order by year,Number_Of_Applications desc;
+
+
+

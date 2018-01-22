@@ -1,0 +1,16 @@
+Select * from (
+
+select * from h1b_analysis.top10_job_position_2011_certified
+  union
+select * from h1b_analysis.top10_job_position_2012_certified
+  union
+select * from h1b_analysis.top10_job_position_2013_certified
+  union
+select * from h1b_analysis.top10_job_position_2014_certified
+  union
+select * from h1b_analysis.top10_job_position_2015_certified
+  union
+select * from h1b_analysis.top10_job_position_2016_certified
+
+               ) as result order by year,Number_Of_Applications desc;
+

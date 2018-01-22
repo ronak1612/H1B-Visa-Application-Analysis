@@ -1,0 +1,250 @@
+CREATE TABLE Data_Partitioned(s_no int,employer_name string, soc_name string, job_title string, full_time_position string,prevailing_wage bigint,worksite string, longitute double, latitute double )
+partitioned by(year string,case_status string)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+
+ from default.h1b_final h1 INSERT OVERWRITE TABLE Data_Partitioned PARTITION(year,case_status) select h1.s_no,h1.employer_name, h1.soc_name, h1.job_title, h1.full_time_position, h1.prevailing_wage, h1.worksite, h1.longitute, h1.latitute, h1.year, h1.case_status DISTRIBUTE by year, case_status;
+
+
+Data_Partitioned:
+
+
+col_name	       data_type	comment
+s_no                	int                 	                    
+employer_name       	string              	                    
+soc_name            	string              	                    
+job_title           	string              	                    
+full_time_position  	string              	                    
+prevailing_wage     	bigint              	                    
+worksite            	string              	                    
+longitute           	double              	                    
+latitute            	double              	                    
+year                	string              	                    
+case_status         	string              	                    
+	 	 
+# Partition Information	 	 
+# col_name            	data_type           	comment             
+	 	 
+year                	string              	                    
+case_status         	string        
+
+
+Technique 1:
+      	   
+
+CREATE TABLE top5_employer_2011 (year string, employer_name string, Number_Of_Petitions bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+
+CREATE TABLE top5_employer_2012 (year string, employer_name string, Number_Of_Petitions bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+
+CREATE TABLE top5_employer_2013 (year string, employer_name string, Number_Of_Petitions bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+
+CREATE TABLE top5_employer_2014 (year string, employer_name string, Number_Of_Petitions bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+
+CREATE TABLE top5_employer_2015 (year string, employer_name string, Number_Of_Petitions bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+CREATE TABLE top5_employer_2016 (year string, employer_name string, Number_Of_Petitions bigint)
+row format delimited
+fields terminated by '\t'
+STORED AS TEXTFILE;
+
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top5_employer_2011 select d1.year, d1.employer_name, count(*) as aa where d1.year="2011" group by d1.year, d1.employer_name order by aa DESC limit 5;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top5_employer_2012 select d1.year, d1.employer_name, count(*) as aa where d1.year="2012" group by d1.year, d1.employer_name order by aa DESC limit 5;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top5_employer_2013 select d1.year, d1.employer_name, count(*) as aa where d1.year="2013" group by d1.year, d1.employer_name order by aa DESC limit 5;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top5_employer_2014 select d1.year, d1.employer_name, count(*) as aa where d1.year="2014" group by d1.year, d1.employer_name order by aa DESC limit 5;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top5_employer_2015 select d1.year, d1.employer_name, count(*) as aa where d1.year="2015" group by d1.year, d1.employer_name order by aa DESC limit 5;
+
+from Data_Partitioned d1 INSERT OVERWRITE TABLE top5_employer_2016 select d1.year, d1.employer_name, count(*) as aa where d1.year="2016" group by d1.year, d1.employer_name order by aa DESC limit 5;
+
+
+
+top5employer.sql  Without orderby
+
+
+Select * from (
+select * from h1b_analysis.top5_employer_2011
+  union
+select * from h1b_analysis.top5_employer_2012
+  union
+select * from h1b_analysis.top5_employer_2013
+  union
+select * from h1b_analysis.top5_employer_2014
+  union
+select * from h1b_analysis.top5_employer_2015
+  union
+select * from h1b_analysis.top5_employer_2016) as result;
+
+result.year	result.employer_name	result.number_of_petitions
+2011	COGNIZANT TECHNOLOGY SOLUTIONS U.S. CORPORATION	2721
+2011	DELOITTE CONSULTING LLP	3621
+2011	MICROSOFT CORPORATION	4253
+2011	TATA CONSULTANCY SERVICES LIMITED	5416
+2011	WIPRO LIMITED	3028
+2012	DELOITTE CONSULTING LLP	4727
+2012	IBM INDIA PRIVATE LIMITED	4074
+2012	INFOSYS LIMITED	15818
+2012	TATA CONSULTANCY SERVICES LIMITED	6735
+2012	WIPRO LIMITED	7182
+2013	ACCENTURE LLP	4994
+2013	DELOITTE CONSULTING LLP	6124
+2013	INFOSYS LIMITED	32223
+2013	TATA CONSULTANCY SERVICES LIMITED	8790
+2013	WIPRO LIMITED	6734
+2014	ACCENTURE LLP	5498
+2014	DELOITTE CONSULTING LLP	7017
+2014	INFOSYS LIMITED	23759
+2014	TATA CONSULTANCY SERVICES LIMITED	14098
+2014	WIPRO LIMITED	8365
+2015	ACCENTURE LLP	9605
+2015	IBM INDIA PRIVATE LIMITED	10693
+2015	INFOSYS LIMITED	33245
+2015	TATA CONSULTANCY SERVICES LIMITED	16553
+2015	WIPRO LIMITED	12201
+2016	CAPGEMINI AMERICA INC	16725
+2016	IBM INDIA PRIVATE LIMITED	9787
+2016	INFOSYS LIMITED	25352
+2016	TATA CONSULTANCY SERVICES LIMITED	13134
+2016	WIPRO LIMITED	10607
+Time taken: 88.195 seconds, Fetched: 30 row(s)
+
+Final: top5employer.sql
+
+Select * from (
+select * from h1b_analysis.top5_employer_2011
+  union
+select * from h1b_analysis.top5_employer_2012
+  union
+select * from h1b_analysis.top5_employer_2013
+  union
+select * from h1b_analysis.top5_employer_2014
+  union
+select * from h1b_analysis.top5_employer_2015
+  union
+select * from h1b_analysis.top5_employer_2016) as result order by year, number_of_petitions desc;
+
+esult.year	result.employer_name	result.number_of_petitions
+2011	TATA CONSULTANCY SERVICES LIMITED	5416
+2011	MICROSOFT CORPORATION	4253
+2011	DELOITTE CONSULTING LLP	3621
+2011	WIPRO LIMITED	3028
+2011	COGNIZANT TECHNOLOGY SOLUTIONS U.S. CORPORATION	2721
+
+2012	INFOSYS LIMITED	15818
+2012	WIPRO LIMITED	7182
+2012	TATA CONSULTANCY SERVICES LIMITED	6735
+2012	DELOITTE CONSULTING LLP	4727
+2012	IBM INDIA PRIVATE LIMITED	4074
+
+2013	INFOSYS LIMITED	32223
+2013	TATA CONSULTANCY SERVICES LIMITED	8790
+2013	WIPRO LIMITED	6734
+2013	DELOITTE CONSULTING LLP	6124
+2013	ACCENTURE LLP	4994
+
+2014	INFOSYS LIMITED	23759
+2014	TATA CONSULTANCY SERVICES LIMITED	14098
+2014	WIPRO LIMITED	8365
+2014	DELOITTE CONSULTING LLP	7017
+2014	ACCENTURE LLP	5498
+
+2015	INFOSYS LIMITED	33245
+2015	TATA CONSULTANCY SERVICES LIMITED	16553
+2015	WIPRO LIMITED	12201
+2015	IBM INDIA PRIVATE LIMITED	10693
+2015	ACCENTURE LLP	9605
+
+2016	INFOSYS LIMITED	25352
+2016	CAPGEMINI AMERICA INC	16725
+2016	TATA CONSULTANCY SERVICES LIMITED	13134
+2016	WIPRO LIMITED	10607
+2016	IBM INDIA PRIVATE LIMITED	9787
+
+Time taken: 104.857 seconds, Fetched: 30 row(s)
+
+
+Technique-2
+
+select * from
+ (
+select *
+From (  select year, employer_name, count(*) as total_application from Yearly_Partition where year="2011" group by year,employer_name  order by total_application DESC  limit 5) as A
+union 
+select *
+From (  select year, employer_name, count(*) as total_application from Yearly_Partition where year="2012" group by year,employer_name  order by total_application DESC  limit 5) as B
+union
+select *
+From (   select year, employer_name, count(*) as total_application from Yearly_Partition where year="2013" group by year,employer_name  order by total_application DESC  limit 5) as C
+union 
+select *
+From (   select year, employer_name, count(*) as total_application from Yearly_Partition where year="2014" group by year,employer_name  order by total_application DESC  limit 5) as D
+union 
+select *
+From (   select year, employer_name, count(*) as total_application from Yearly_Partition where year="2015" group by year,employer_name  order by total_application DESC  limit 5) as E
+union 
+select *
+From (  select year, employer_name, count(*) as total_application from Yearly_Partition where year="2016" group by year,employer_name  order by total_application DESC  limit 5) as F
+) as G order by year, total_application desc;
+
+2011	TATA CONSULTANCY SERVICES LIMITED	5416
+2011	MICROSOFT CORPORATION	4253
+2011	DELOITTE CONSULTING LLP	3621
+2011	WIPRO LIMITED	3028
+2011	COGNIZANT TECHNOLOGY SOLUTIONS U.S. CORPORATION	2721
+2012	INFOSYS LIMITED	15818
+2012	WIPRO LIMITED	7182
+2012	TATA CONSULTANCY SERVICES LIMITED	6735
+2012	DELOITTE CONSULTING LLP	4727
+2012	IBM INDIA PRIVATE LIMITED	4074
+2013	INFOSYS LIMITED	32223
+2013	TATA CONSULTANCY SERVICES LIMITED	8790
+2013	WIPRO LIMITED	6734
+2013	DELOITTE CONSULTING LLP	6124
+2013	ACCENTURE LLP	4994
+2014	INFOSYS LIMITED	23759
+2014	TATA CONSULTANCY SERVICES LIMITED	14098
+2014	WIPRO LIMITED	8365
+2014	DELOITTE CONSULTING LLP	7017
+2014	ACCENTURE LLP	5498
+2015	INFOSYS LIMITED	33245
+2015	TATA CONSULTANCY SERVICES LIMITED	16553
+2015	WIPRO LIMITED	12201
+2015	IBM INDIA PRIVATE LIMITED	10693
+2015	ACCENTURE LLP	9605
+2016	INFOSYS LIMITED	25352
+2016	CAPGEMINI AMERICA INC	16725
+2016	TATA CONSULTANCY SERVICES LIMITED	13134
+2016	WIPRO LIMITED	10607
+2016	IBM INDIA PRIVATE LIMITED	9787
+
+
+
+
+
+
+
+
